@@ -1,104 +1,209 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Opay Wallet</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f4f4f4;
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1c;
+      color: #fff;
+      transition: background 0.3s, color 0.3s;
     }
-    .lock-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      flex-direction: column;
+    .light {
+      background-color: #f5f5f5;
+      color: #111;
     }
-    .lock-screen input {
-      font-size: 1.5rem;
-      padding: 0.5rem;
-      width: 200px;
-      text-align: center;
-      border: 2px solid #0aa83f;
-      border-radius: 8px;
-      outline: none;
-    }
-    .lock-screen button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background-color: #0aa83f;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    .wallet-app {
-      display: none;
-      padding: 2rem;
-    }
-    .balance {
-      background-color: #0aa83f;
-      color: white;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .transactions h3 {
-      margin-top: 0;
-    }
-    .transaction {
-      background-color: white;
-      margin-bottom: 0.5rem;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    header {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #008d36;
+    }
+    header img {
+      height: 30px;
+    }
+    header button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 20px;
+    }
+    .container {
+      padding: 1rem;
+    }
+    .balance-box {
+      background: #fff;
+      color: #000;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .hidden-balance {
+      filter: blur(8px);
+    }
+    .eye-icon {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .grid-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .grid-buttons button {
+      background: #00a85a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .transactions {
+      background: #fff;
+      color: #000;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+    .transactions .txn {
+      border-bottom: 1px solid #ccc;
+      padding: 0.5rem 0;
+    }
+    .transactions .txn:last-child {
+      border-bottom: none;
+    }
+    .locked-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      text-align: center;
+      z-index: 1000;
+    }
+    #lock-screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: black;
+      color: white;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    input[type="password"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      margin-top: 10px;
+      text-align: center;
+    }
+    button.unlock-btn {
+      margin-top: 1rem;
+      background: #00cc66;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      color: white;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="lock-screen">
-    <h2>Enter your 6-digit wallet password</h2>
-    <input type="password" maxlength="6" id="passwordInput" />
-    <button onclick="unlockWallet()">Unlock</button>
-    <p id="error" style="color: red; display: none;">Incorrect password</p>
-  </div>  <div class="wallet-app" id="walletApp">
-    <div class="balance">Balance: ₦203,000.00</div><div class="transactions">
-  <h3>Recent Transactions</h3>
-  <div class="transaction"><span>Transfer to Chinedu</span><span>-₦7,000</span></div>
-  <div class="transaction"><span>Received from Musa</span><span>+₦15,000</span></div>
-  <div class="transaction"><span>Airtime Recharge</span><span>-₦1,500</span></div>
-  <div class="transaction"><span>POS Withdrawal</span><span>-₦10,000</span></div>
-  <div class="transaction"><span>Transfer to Ada</span><span>-₦5,000</span></div>
-  <div class="transaction"><span>Received from Olu</span><span>+₦12,000</span></div>
-  <div class="transaction"><span>NEPA Bill</span><span>-₦3,800</span></div>
-  <!-- Add more fake transactions below as needed -->
-</div>
+<div id="lock-screen">
+  <h2>Enter your 6-digit password</h2>
+  <input type="password" id="password-input" maxlength="6" placeholder="______">
+  <button class="unlock-btn" onclick="unlock()">Unlock</button>
+</div><header>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/f/fb/OPay_logo.png" alt="Opay Logo">
+  <button onclick="toggleTheme()"><i class="fas fa-adjust"></i></button>
+</header>
+<div class="container">
+  <div class="balance-box">
+    <div class="eye-icon" onclick="toggleBalance()"><i id="eye" class="fas fa-eye"></i></div>
+    <h3>Wallet Balance</h3>
+    <h1 id="balance">₦203,000.00</h1>
+  </div>  <div class="grid-buttons">
+    <button onclick="locked()">Send</button>
+    <button onclick="locked()">Receive</button>
+    <button onclick="locked()">Fund Wallet</button>
+    <button onclick="locked()">Withdraw</button>
+    <button onclick="locked()">Airtime</button>
+    <button onclick="locked()">Data</button>
+  </div>  <div class="section-title">Recent Transactions</div>
+  <div class="transactions" id="txns"></div>
+</div><script>
+const realBalance = '₦203,000.00';
+let showBalance = true;
+let dark = true;
+const txns = [
+  { date: 'Jul 10, 2025', desc: 'Transfer From James', amt: '+₦3,000.00' },
+  { date: 'Jul 10, 2025', desc: 'Airtime Recharge', amt: '-₦500.00' },
+  { date: 'Jul 9, 2025', desc: 'POS Withdrawal', amt: '-₦4,000.00' },
+  { date: 'Jul 9, 2025', desc: 'Bank Transfer GTB', amt: '+₦8,500.00' },
+  { date: 'Jul 8, 2025', desc: 'Fund Wallet', amt: '+₦2,750.00' },
+  { date: 'Jul 8, 2025', desc: 'Transfer To Wema', amt: '-₦3,200.00' },
+  { date: 'Jul 7, 2025', desc: 'POS Funding', amt: '+₦10,000.00' },
+  { date: 'Jul 6, 2025', desc: 'Jumia Refund', amt: '+₦1,200.00' },
+  { date: 'Jul 5, 2025', desc: 'MTN Data', amt: '-₦1,000.00' },
+  { date: 'Jul 5, 2025', desc: 'Transfer to Zenith', amt: '-₦7,200.00' },
+  // Add 40 more transactions programmatically
+];
+for(let i=0;i<40;i++){
+  let plus = Math.random() > 0.5;
+  let amt = (Math.random()*5000+1000).toFixed(2);
+  txns.push({
+    date: `Jul ${Math.floor(Math.random()*10)+1}, 2025`,
+    desc: plus ? 'Transfer From User' : 'Transfer To Merchant',
+    amt: (plus ? '+' : '-') + '₦' + amt
+  });
+}
+document.getElementById('txns').innerHTML = txns.map(txn => `
+  <div class="txn">
+    <strong>${txn.desc}</strong><br>
+    ${txn.date} <span style="float:right">${txn.amt}</span>
+  </div>
+`).join('');
 
-  </div>  <script>
-    function unlockWallet() {
-      const input = document.getElementById('passwordInput').value;
-      const correctPassword = '926081';
-      const errorText = document.getElementById('error');
-
-      if (input === correctPassword) {
-        document.querySelector('.lock-screen').style.display = 'none';
-        document.getElementById('walletApp').style.display = 'block';
-      } else {
-        errorText.style.display = 'block';
-      }
-    }
-  </script></body>
-</html>
+function toggleBalance() {
+  showBalance = !showBalance;
+  const b = document.getElementById('balance');
+  const icon = document.getElementById('eye');
+  if (showBalance) {
+    b.textContent = realBalance;
+    icon.className = 'fas fa-eye';
+  } else {
+    b.textContent = '••••••••';
+    icon.className = 'fas fa-eye-slash';
+  }
+}
+function toggleTheme() {
+  dark = !dark;
+  document.body.className = dark ? '' : 'light';
+}
+function locked() {
+  alert('🔒 Pay ₦8,000 to unlock this feature');
+}
+function unlock() {
+  const input = document.getElementById('password-input').value;
+  if (input === '926081') {
+    document.getElementById('lock-screen').style.display = 'none';
