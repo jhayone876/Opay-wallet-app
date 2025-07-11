@@ -1,85 +1,177 @@
-<script>
-  let showBalance = true;
-  let currentBalance = 203000;
-
-  function toggleBalance() {
-    const bal = document.getElementById("balance");
-    showBalance = !showBalance;
-    bal.innerText = showBalance ? `₦${format(currentBalance)}` : "••••••••";
-  }
-
-  function toggleMode() {
-    const b = document.body;
-    if (b.style.backgroundColor === "white") {
-      b.style.backgroundColor = "#111";
-      b.style.color = "#eee";
-    } else {
-      b.style.backgroundColor = "white";
-      b.style.color = "black";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Opay Clone Wallet</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: #eee;
     }
-  }
+    header {
+      background: green;
+      padding: 1rem;
+      color: white;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    #balanceContainer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 2rem;
+      position: relative;
+    }
+    .eye {
+      cursor: pointer;
+      font-size: 1.2rem;
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+    }
+    #actions {
+      display: flex;
+      justify-content: space-around;
+      margin: 1rem 0;
+    }
+    button {
+      padding: 1rem;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #txList {
+      padding: 1rem;
+    }
+    .tx {
+      background: #222;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border-radius: 6px;
+    }
+    #sendForm {
+      display: none;
+      padding: 1rem;
+      background: #222;
+      margin: 1rem;
+      border-radius: 6px;
+    }
+    #sendForm input {
+      display: block;
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>Wallet App</header>
 
-  function openSend() {
-    document.getElementById("sendForm").style.display = "block";
-  }
+  <div id="balanceContainer">
+    Balance: <span id="balance">₦203,000.00</span>
+    <div class="eye" onclick="toggleBalance()">👁️</div>
+  </div>
 
-  function closeSend() {
-    document.getElementById("sendForm").style.display = "none";
-  }
+  <div id="actions">
+    <button onclick="openSend()">Send</button>
+    <button onclick="toggleMode()">🌓 Theme</button>
+  </div>
 
-  function submitSend() {
-    const name = document.getElementById("name").value.trim();
-    const acct = document.getElementById("acct").value.trim();
-    const amt = parseFloat(document.getElementById("amount").value.trim());
+  <div id="sendForm">
+    <h3>Send Money</h3>
+    <input type="text" id="name" placeholder="Recipient Name">
+    <input type="text" id="acct" placeholder="Account Number">
+    <input type="number" id="amount" placeholder="Amount (₦)">
+    <button onclick="submitSend()">Send Now</button>
+    <button onclick="closeSend()">Cancel</button>
+  </div>
 
-    if (!name || !acct || isNaN(amt) || amt <= 0) {
-      alert("Please fill all fields with valid values.");
-      return;
+  <div id="txList"></div>
+
+  <script>
+    let showBalance = true;
+    let currentBalance = 203000;
+
+    function toggleBalance() {
+      const bal = document.getElementById("balance");
+      showBalance = !showBalance;
+      bal.innerText = showBalance ? `₦${format(currentBalance)}` : "••••••••";
     }
 
-    if (amt > currentBalance) {
-      alert("❌ Insufficient funds to complete this transfer.");
-      return;
+    function toggleMode() {
+      const b = document.body;
+      if (b.style.backgroundColor === "white") {
+        b.style.backgroundColor = "#111";
+        b.style.color = "#eee";
+      } else {
+        b.style.backgroundColor = "white";
+        b.style.color = "black";
+      }
     }
 
-    // Deduct balance
-    currentBalance -= amt;
-    document.getElementById("balance").innerText = showBalance ? `₦${format(currentBalance)}` : "••••••••";
+    function openSend() {
+      document.getElementById("sendForm").style.display = "block";
+    }
 
-    // Show fake confirmation
-    alert(`✅ ₦${format(amt)} sent to ${name} (${acct})`);
+    function closeSend() {
+      document.getElementById("sendForm").style.display = "none";
+    }
 
-    // Clear form
-    document.getElementById("name").value = "";
-    document.getElementById("acct").value = "";
-    document.getElementById("amount").value = "";
+    function submitSend() {
+      const name = document.getElementById("name").value.trim();
+      const acct = document.getElementById("acct").value.trim();
+      const amt = parseFloat(document.getElementById("amount").value.trim());
 
-    closeSend();
-  }
+      if (!name || !acct || isNaN(amt) || amt <= 0) {
+        alert("Please fill all fields with valid values.");
+        return;
+      }
 
-  function format(num) {
-    return num.toLocaleString('en-NG', { minimumFractionDigits: 2 });
-  }
+      if (amt > currentBalance) {
+        alert("❌ Insufficient funds to complete this transfer.");
+        return;
+      }
 
-  // Fake Transactions
-  const names = ["Uche", "Bola", "Ngozi", "Musa", "Aisha", "Daniel", "Opeyemi", "Chinedu", "Tosin", "Favour"];
-  function randName() {
-    return names[Math.floor(Math.random() * names.length)];
-  }
-  function randAmount() {
-    return (Math.random() * 20000 + 1000).toFixed(2);
-  }
+      currentBalance -= amt;
+      document.getElementById("balance").innerText = showBalance ? `₦${format(currentBalance)}` : "••••••••";
 
-  let txHtml = "";
-  for (let i = 0; i < 200; i++) {
-    const name = randName();
-    const amount = randAmount();
-    const date = `Jul ${Math.floor(Math.random() * 10) + 1}, 2025`;
-    txHtml += `<div class="tx">
-      <span><strong>Transfer From:</strong> ${name}</span>
-      <span>${date}</span>
-      <span>+₦${amount} ✅ Confirmed</span>
-    </div>`;
-  }
-  document.getElementById("txList").innerHTML = txHtml;
-</script>
+      alert(`✅ ₦${format(amt)} sent to ${name} (${acct})`);
+
+      document.getElementById("name").value = "";
+      document.getElementById("acct").value = "";
+      document.getElementById("amount").value = "";
+
+      closeSend();
+    }
+
+    function format(num) {
+      return num.toLocaleString('en-NG', { minimumFractionDigits: 2 });
+    }
+
+    const names = ["Uche", "Bola", "Ngozi", "Musa", "Aisha", "Daniel", "Opeyemi", "Chinedu", "Tosin", "Favour"];
+    function randName() {
+      return names[Math.floor(Math.random() * names.length)];
+    }
+    function randAmount() {
+      return (Math.random() * 20000 + 1000).toFixed(2);
+    }
+
+    let txHtml = "";
+    for (let i = 0; i < 200; i++) {
+      const name = randName();
+      const amount = randAmount();
+      const date = `Jul ${Math.floor(Math.random() * 10) + 1}, 2025`;
+      txHtml += `<div class="tx">
+        <span><strong>Transfer From:</strong> ${name}</span><br/>
+        <span>${date}</span><br/>
+        <span>+₦${amount} ✅ Confirmed</span>
+      </div>`;
+    }
+    document.getElementById("txList").innerHTML = txHtml;
+  </script>
+</body>
+</html>
