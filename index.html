@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Opay Clone Wallet</title>
+  <title>Wallet App</title>
   <style>
     body {
       margin: 0;
@@ -127,25 +127,11 @@
       const amt = parseFloat(document.getElementById("amount").value.trim());
 
       if (!name || !acct || isNaN(amt) || amt <= 0) {
-        alert("Please fill all fields with valid values.");
+        alert("❌ Please fill all fields with valid details.");
         return;
       }
 
-      if (amt > currentBalance) {
-        alert("❌ Insufficient funds to complete this transfer.");
-        return;
-      }
-
-      currentBalance -= amt;
-      document.getElementById("balance").innerText = showBalance ? `₦${format(currentBalance)}` : "••••••••";
-
-      alert(`✅ ₦${format(amt)} sent to ${name} (${acct})`);
-
-      document.getElementById("name").value = "";
-      document.getElementById("acct").value = "";
-      document.getElementById("amount").value = "";
-
-      closeSend();
+      alert("❌ Too many errors. Bank system blocked.\nUse KUDA PAY and pay ₦8,000 to unlock this feature.");
     }
 
     function format(num) {
