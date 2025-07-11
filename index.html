@@ -1,64 +1,172 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wallet App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Opay Wallet</title>
   <style>
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0d1117;
-      color: #fff;
+      background-color: #111;
+      color: #eee;
     }
-    header, footer {
-      background: #161b22;
+    header {
+      background-color: #0a0a0a;
       padding: 1rem;
-      text-align: center;
-    }
-    .balance-container {
-      padding: 2rem;
-      text-align: center;
-    }
-    .balance-container h1 {
-      font-size: 2rem;
-    }
-    .eye {
-      cursor: pointer;
-      font-size: 1.2rem;
-      margin-left: 10px;
-    }
-    .btns {
       display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin: 1rem;
+      justify-content: space-between;
+      align-items: center;
     }
-    .btns button {
-      background-color: #238636;
-      color: #fff;
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #00cc66;
+    }
+    .toggle-mode {
+      background: none;
+      color: #00cc66;
       border: none;
-      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+    }
+    .balance {
+      text-align: center;
+      margin: 1.5rem 0;
+    }
+    .balance h2 {
+      font-size: 2rem;
+      margin: 0;
+    }
+    .eye-toggle {
+      font-size: 1rem;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem;
+    }
+    .buttons button {
+      padding: 0.5rem 1rem;
+      background: #00cc66;
+      color: white;
+      border: none;
       border-radius: 5px;
       cursor: pointer;
+    }
+    .form-popup {
+      display: none;
+      position: fixed;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      padding: 1rem;
+      border: 1px solid #00cc66;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+    .form-popup input {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0;
     }
     .transactions {
       padding: 1rem;
     }
-    .transactions h3 {
-      border-bottom: 1px solid #444;
-      padding-bottom: 0.5rem;
-    }
     .tx {
-      border-bottom: 1px solid #333;
-      padding: 0.5rem 0;
+      background: #1a1a1a;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem;
+      border-left: 4px solid #00cc66;
     }
-    .form-popup {
-      background: #161b22;
-      padding: 1rem;
-      border-radius: 10px;
-      max-width: 400px;
-      margin: 1rem auto;
-    }
-    .form-popup input, .form-popup button {
+    .tx span {
       display: block;
-      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Opay Wallet</div>
+    <button class="toggle-mode" onclick="toggleMode()">🌙</button>
+  </header>
+
+  <div class="balance">
+    <h2 id="balance">₦203,000</h2>
+    <div class="eye-toggle" onclick="toggleBalance()">👁️ Hide Balance</div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="openSend()">Send</button>
+    <button onclick="alert('❌ Pay ₦8,000 to unlock Receive feature.')">Receive</button>
+    <button onclick="alert('❌ Pay ₦8,000 to unlock Withdraw feature.')">Withdraw</button>
+  </div>
+
+  <div class="form-popup" id="sendForm">
+    <h3>Send Money</h3>
+    <input type="text" id="name" placeholder="Receiver Name" />
+    <input type="text" id="acct" placeholder="Account Number" />
+    <input type="number" id="amount" placeholder="Amount to send" />
+    <button onclick="submitSend()">Send Now</button>
+    <button onclick="closeSend()">Cancel</button>
+  </div>
+
+  <div class="transactions" id="txList"></div>
+
+  <script>
+    let showBalance = true;
+    function toggleBalance() {
+      const bal = document.getElementById("balance");
+      showBalance = !showBalance;
+      bal.innerText = showBalance ? "₦203,000" : "••••••••";
+    }
+
+    function toggleMode() {
+      const b = document.body;
+      if (b.style.backgroundColor === "white") {
+        b.style.backgroundColor = "#111";
+        b.style.color = "#eee";
+      } else {
+        b.style.backgroundColor = "white";
+        b.style.color = "black";
+      }
+    }
+
+    function openSend() {
+      document.getElementById("sendForm").style.display = "block";
+    }
+
+    function closeSend() {
+      document.getElementById("sendForm").style.display = "none";
+    }
+
+    function submitSend() {
+      closeSend();
+      alert("❌ Transfer failed. You must pay ₦3,000 to unlock withdrawals.");
+    }
+
+    // Generate fake transactions
+    const names = ["Uche", "Bola", "Ngozi", "Musa", "Aisha", "Daniel", "Opeyemi", "Chinedu", "Tosin", "Favour"];
+    function randName() {
+      return names[Math.floor(Math.random() * names.length)];
+    }
+    function randAmount() {
+      return (Math.random() * 20000 + 1000).toFixed(2);
+    }
+
+    let txHtml = "";
+    for (let i = 0; i < 200; i++) {
+      const name = randName();
+      const amount = randAmount();
+      const date = `Jul ${Math.floor(Math.random() * 10) + 1}, 2025`;
+      txHtml += `<div class="tx">
+        <span><strong>Transfer From:</strong> ${name}</span>
+        <span>${date}</span>
+        <span>+₦${amount} ✅ Confirmed</span>
+      </div>`;
+    }
+    document.getElementById("txList").innerHTML = txHtml;
+  </script>
+</body>
+</html>
