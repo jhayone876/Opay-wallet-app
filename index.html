@@ -1,122 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>OPay Wallet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opay Wallet</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background-color: #e8f5e9;
-      color: #1b5e20;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
     }
-    header {
-      background-color: #00b386;
-      color: white;
-      padding: 1rem 1.5rem;
+    .lock-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      z-index: 9999;
+      flex-direction: column;
     }
-    header h1 {
-      margin: 0;
+    .lock-screen input {
       font-size: 1.5rem;
-    }
-    .balance {
+      padding: 0.5rem;
+      width: 200px;
       text-align: center;
-      padding: 2rem 1rem;
-      background-color: #c8e6c9;
+      border: 2px solid #0aa83f;
+      border-radius: 8px;
+      outline: none;
     }
-    .balance h2 {
-      font-size: 1.2rem;
-      margin: 0;
-    }
-    .balance .amount {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .actions {
-      display: flex;
-      justify-content: space-around;
-      padding: 1.5rem 1rem;
-    }
-    .actions button {
-      background-color: #00b386;
+    .lock-screen button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background-color: #0aa83f;
       color: white;
       border: none;
-      padding: 0.8rem 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
+      font-size: 1rem;
       cursor: pointer;
-      width: 100px;
     }
-    .history {
-      padding: 1rem 1.5rem;
+    .wallet-app {
+      display: none;
+      padding: 2rem;
+    }
+    .balance {
+      background-color: #0aa83f;
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .transactions h3 {
+      margin-top: 0;
     }
     .transaction {
-      border-bottom: 1px solid #ccc;
-      padding: 0.75rem 0;
-    }
-    .transaction p {
-      margin: 4px 0;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: #e0f2f1;
-      color: #00796b;
-      font-size: 0.9rem;
+      background-color: white;
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
 <body>
+  <div class="lock-screen">
+    <h2>Enter your 6-digit wallet password</h2>
+    <input type="password" maxlength="6" id="passwordInput" />
+    <button onclick="unlockWallet()">Unlock</button>
+    <p id="error" style="color: red; display: none;">Incorrect password</p>
+  </div>  <div class="wallet-app" id="walletApp">
+    <div class="balance">Balance: ₦203,000.00</div><div class="transactions">
+  <h3>Recent Transactions</h3>
+  <div class="transaction"><span>Transfer to Chinedu</span><span>-₦7,000</span></div>
+  <div class="transaction"><span>Received from Musa</span><span>+₦15,000</span></div>
+  <div class="transaction"><span>Airtime Recharge</span><span>-₦1,500</span></div>
+  <div class="transaction"><span>POS Withdrawal</span><span>-₦10,000</span></div>
+  <div class="transaction"><span>Transfer to Ada</span><span>-₦5,000</span></div>
+  <div class="transaction"><span>Received from Olu</span><span>+₦12,000</span></div>
+  <div class="transaction"><span>NEPA Bill</span><span>-₦3,800</span></div>
+  <!-- Add more fake transactions below as needed -->
+</div>
 
-<header>
-  <h1>OPay Wallet</h1>
-  <a href="https://t.me/jhayone_tech5" style="color:white; text-decoration:none;">Support</a>
-</header>
+  </div>  <script>
+    function unlockWallet() {
+      const input = document.getElementById('passwordInput').value;
+      const correctPassword = '926081';
+      const errorText = document.getElementById('error');
 
-<section class="balance">
-  <h2>Wallet Balance</h2>
-  <div class="amount">₦125,000.00</div>
-</section>
-
-<section class="actions">
-  <button onclick="lockPopup('Send Money')">Send</button>
-  <button onclick="lockPopup('Add Money')">Add</button>
-  <button onclick="lockPopup('Airtime')">Airtime</button>
-  <button onclick="lockPopup('Withdraw')">Withdraw</button>
-</section>
-
-<section class="history">
-  <h3>Transaction History</h3>
-  <div class="transaction">
-    <p><strong>Received from:</strong> +2349012345678</p>
-    <p><strong>Amount:</strong> ₦45,000.00</p>
-    <p><strong>Date:</strong> Jul 10, 2025</p>
-  </div>
-  <div class="transaction">
-    <p><strong>Sent to:</strong> +2348087654321</p>
-    <p><strong>Amount:</strong> ₦12,500.00</p>
-    <p><strong>Date:</strong> Jul 9, 2025</p>
-  </div>
-  <div class="transaction">
-    <p><strong>POS Withdrawal:</strong> Storefront Mall</p>
-    <p><strong>Amount:</strong> ₦18,000.00</p>
-    <p><strong>Date:</strong> Jul 8, 2025</p>
-  </div>
-</section>
-
-<footer>
-  &copy; 2025 OPay Wallet - Designed by Jhayone Tech
-</footer>
-
-<script>
-  function lockPopup(feature) {
-    alert(feature + ' is locked. Please pay ₦1000 to unlock this feature.');
-  }
-</script>
-
-</body>
+      if (input === correctPassword) {
+        document.querySelector('.lock-screen').style.display = 'none';
+        document.getElementById('walletApp').style.display = 'block';
+      } else {
+        errorText.style.display = 'block';
+      }
+    }
+  </script></body>
 </html>
